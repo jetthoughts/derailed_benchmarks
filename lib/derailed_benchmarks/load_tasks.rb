@@ -103,8 +103,8 @@ namespace :perf do
       sleep 1
 
       def call_app(path = File.join("/", PATH_TO_HIT))
-        cmd = "curl #{CURL_HTTP_HEADER_ARGS} 'http://localhost:#{@port}#{path}' -s --fail 2>&1"
-        response = `#{cmd}`
+        cmd = ENV["TEST_APP_CMD"] || "curl #{CURL_HTTP_HEADER_ARGS} 'http://localhost:#{@port}#{path}' -s --fail 2>&1"
+        response = system({"APP_PORT" => @port.to_s}, cmd)
         unless $?.success?
           STDERR.puts "Couldn't call app."
           STDERR.puts "Bad request to #{cmd.inspect} \n\n***RESPONSE***:\n\n#{ response.inspect }"
